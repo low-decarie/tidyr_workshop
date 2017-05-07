@@ -5,7 +5,7 @@
 </style>
 
 
-tidyr
+tidyr (and broom)
 ========================================================
 author: Etienne Low-Décarie
 transition: zoom
@@ -111,8 +111,8 @@ Exercise 1
 ===
 
 - basic challenge
-  - make the `data(BCI)` long (`require(vegan)`)
-  - make the data in `data(simesants)` long (`require(simesants)`)
+  - make a histogram for each species in `data(BCI)` (`require(vegan)`)
+  -hint : save to a big pdf!
   
 <div class="centered">
 
@@ -407,97 +407,9 @@ var myCountdown2 = new Countdown({
 </div>
 
 
-Exercise 2
-===
-
-
-```r
-barley_wide <- spread(barley,
-                    variety,
-                    yield)
-```
-
-
-Going long for faceting by variable
-===
-left: 70%
-
-Excellent for exploratory analysis
 
 
 
-
-```r
-p <- ggplot(data=long_iris,
-            aes(x=Species,
-           y=Value))+
-           geom_bar(stat="summary",
-           fun.y="mean",
-           fill=I("grey"))+
-  stat_summary(fun.data = "mean_cl_boot", geom="errorbar")
-```
-
-***
-
-![plot of chunk unnamed-chunk-13](tidyr-figure/unnamed-chunk-13-1.png)
-
-Going long for faceting by variable
-===
-
-
-```r
-print(p+facet_grid(.~Measurement))
-```
-
-![plot of chunk unnamed-chunk-14](tidyr-figure/unnamed-chunk-14-1.png)
-
-
-Going long for faceting by variable
-===
-
-
-```r
-print(p+facet_grid(Measurement~., scale="free"))
-```
-
-![plot of chunk unnamed-chunk-15](tidyr-figure/unnamed-chunk-15-1.png)
-
-Exercise 3
-===
-
--using `gather` and `facets`
-- plot a histogram of each of the variables in `USArrests`
-- plot the time series for each of the variables in the `airquality` dataset
-
-<div class="centered">
-
-<script src="countdown.js" type="text/javascript"></script>
-<script type="application/javascript">
-var myCountdown1 = new Countdown({
-    							time: 300, 
-									width:150, 
-									height:80, 
-									rangeHi:"minute"	// <- no comma on last item!
-									});
-
-</script>
-
-</div>
-
-Exercise 3
-===
-
-```r
-USArrests_long <- gather(USArrests,
-                         crime_var,
-                         value)
-p <- qplot(data=USArrests_long,
-           x=value)+
-  facet_grid(.~crime_var, scale="free")
-print(p)
-```
-
-![plot of chunk unnamed-chunk-16](tidyr-figure/unnamed-chunk-16-1.png)
 
 Seperate string variable
 ===
@@ -539,13 +451,13 @@ p <- ggplot(data=seperated_iris,
 
 ***
 
-![plot of chunk unnamed-chunk-20](tidyr-figure/unnamed-chunk-20-1.png)
+![plot of chunk unnamed-chunk-13](tidyr-figure/unnamed-chunk-13-1.png)
 
 
-Exercise 4
+Exercise 3
 ===
 
-Using facets, produce an exploratory plot of `Length,	Body Width and	Caudal`
+Using `gather` and `facets`, produce an exploratory plot of `Length,	Body Width and	Caudal`
 using the data from:  
 Jacobson, B., Grant, J.W.A. & Peres-Neto, P.R., 2015. The interaction between the spatial distribution of resource patches and population density: consequences for intraspecific growth and morphology. Journal of Animal Ecology, 84(4), pp.934–942.  
 [paper](http://onlinelibrary.wiley.com/doi/10.1111/1365-2656.12365/abstract;jsessionid=B13A863A84D13569CB0BB21F1FA10CD6.f03t01)
@@ -621,10 +533,156 @@ p <- qplot(data=augmented_iris,
 print(p)
 ```
 
-![plot of chunk unnamed-chunk-23](tidyr-figure/unnamed-chunk-23-1.png)
+![plot of chunk unnamed-chunk-16](tidyr-figure/unnamed-chunk-16-1.png)
 
-Feedback
+Exercise 4
 ===
 
-[Feedback form](http://goo.gl/forms/3mH1UC0fH3)
-http://goo.gl/forms/3mH1UC0fH3
+Produce a plot of the models in the examples found in ?glm which include the measured response, the predicted response and the explanatory variables
+
+
+
+<div class="centered">
+
+<script src="countdown.js" type="text/javascript"></script>
+<script type="application/javascript">
+var myCountdown1 = new Countdown({
+    							time: 300, 
+									width:150, 
+									height:80, 
+									rangeHi:"minute"	// <- no comma on last item!
+									});
+
+</script>
+
+</div>
+
+
+Example solution exercise 1
+===
+
+```r
+bci_long <- gather(BCI)
+qplot(data=bci_long, x=value)+facet_wrap(~key)
+```
+
+
+Exercise 2
+===
+
+
+```r
+barley_wide <- spread(barley,
+                    variety,
+                    yield)
+
+barley_wide$Velvet-barley_wide$Manchuria
+```
+
+```
+ [1] 10.10000 -0.10000 -0.10000  4.46667 -0.90001  3.93333 -9.93334
+ [8] -2.66667 12.90000 -1.30001  1.40000  1.36666
+```
+
+Exercise 4
+===
+
+```r
+d.AD <- augment(glm.D93)
+qplot(data=d.AD,
+      x=treatment,
+      colour=outcome,
+      y=counts)+
+  geom_point(aes(y=.fitted),
+             shape=5)
+```
+
+
+Additional examples
+===
+
+
+
+
+Going long for faceting by variable
+===
+left: 70%
+
+Excellent for exploratory analysis
+
+
+
+
+```r
+p <- ggplot(data=long_iris,
+            aes(x=Species,
+           y=Value))+
+           geom_bar(stat="summary",
+           fun.y="mean",
+           fill=I("grey"))+
+  stat_summary(fun.data = "mean_cl_boot", geom="errorbar")
+```
+
+***
+
+![plot of chunk unnamed-chunk-22](tidyr-figure/unnamed-chunk-22-1.png)
+
+
+
+Going long for faceting by variable
+===
+
+
+```r
+print(p+facet_grid(.~Measurement))
+```
+
+![plot of chunk unnamed-chunk-23](tidyr-figure/unnamed-chunk-23-1.png)
+
+
+Going long for faceting by variable
+===
+
+
+```r
+print(p+facet_grid(Measurement~., scale="free"))
+```
+
+![plot of chunk unnamed-chunk-24](tidyr-figure/unnamed-chunk-24-1.png)
+
+Exercise 3
+===
+
+-using `gather` and `facets`
+- plot a histogram of each of the variables in `USArrests`
+- plot the time series for each of the variables in the `airquality` dataset
+
+<div class="centered">
+
+<script src="countdown.js" type="text/javascript"></script>
+<script type="application/javascript">
+var myCountdown1 = new Countdown({
+    							time: 300, 
+									width:150, 
+									height:80, 
+									rangeHi:"minute"	// <- no comma on last item!
+									});
+
+</script>
+
+</div>
+
+Exercise 3
+===
+
+```r
+USArrests_long <- gather(USArrests,
+                         crime_var,
+                         value)
+p <- qplot(data=USArrests_long,
+           x=value)+
+  facet_grid(.~crime_var, scale="free")
+print(p)
+```
+
+![plot of chunk unnamed-chunk-25](tidyr-figure/unnamed-chunk-25-1.png)
